@@ -6,9 +6,9 @@ import lk.ijse.pos.dto.CustomerDTO;
 import java.util.List;
 
 public interface CustomerBO extends SuperBO {
-    CustomerDTO saveCustomer(CustomerDTO dto);
+    boolean saveCustomer(CustomerDTO dto);
 
-    CustomerDTO updateCustomer(CustomerDTO dto);
+    boolean updateCustomer(CustomerDTO dto);
 
     CustomerDTO findCustomerById(int id);
 

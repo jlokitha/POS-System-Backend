@@ -13,7 +13,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     private Connection connection = DbConnection.getInstance().getConnection();
 
     @Override
-    public Customer save(Customer customer) {
+    public boolean save(Customer customer) {
         try {
             String SAVE_CUSTOMER = "INSERT INTO customer (id, name, address, salary) VALUES (?,?,?,?)";
 
@@ -28,18 +28,18 @@ public class CustomerDAOImpl implements CustomerDAO {
 
             if (save != 0) {
                 customer.setId(save);
-                return customer;
+                return true;
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return false;
     }
 
     @Override
-    public Customer update(Customer customer) {
+    public boolean update(Customer customer) {
         try {
             String UPDATE_CUSTOMER = "UPDATE customer SET name=?, address=?, salary=? WHERE id=?";
 
@@ -53,17 +53,17 @@ public class CustomerDAOImpl implements CustomerDAO {
             int update = stm.executeUpdate();
 
             if (update != 0) {
-                return customer;
+                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return false;
     }
 
     @Override
-    public Customer findById(int id) {
+    public Customer getData(int id) {
 
         try {
             String GET_CUSTOMER = "SELECT * FROM customer WHERE id=?";
@@ -91,7 +91,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public List<Customer> findAll() {
+    public List<Customer> getAll() {
 
         try {
             String FIND_ALL = "SELECT * FROM customer";

@@ -7,71 +7,75 @@ import lk.ijse.pos.dao.custom.impl.CustomerDAOImpl;
 import lk.ijse.pos.dto.CustomerDTO;
 import lk.ijse.pos.entity.Customer;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerBOImpl implements CustomerBO {
     private final CustomerDAO customerDAO =
-            (CustomerDAOImpl) DAOFactory.getDaoFactory().getDAO( DAOFactory.DAOType.CUSTOMER );
+            (CustomerDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOType.CUSTOMER);
 
     @Override
-    public CustomerDTO saveCustomer(CustomerDTO dto) {
-        Customer save = customerDAO.save(dto.toEntity());
-
-        if (save != null) {
-            return save.toDto();
+    public boolean saveCustomer(CustomerDTO dto) {
+        try {
+            return customerDAO.save(dto.toEntity());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        return null;
+        return false;
     }
 
     @Override
-    public CustomerDTO updateCustomer(CustomerDTO dto) {
-        Customer update = customerDAO.update(dto.toEntity());
-
-        if (update != null) {
-            return update.toDto();
+    public boolean updateCustomer(CustomerDTO dto) {
+        try {
+            return customerDAO.update(dto.toEntity());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        return null;
+        return false;
     }
 
     @Override
     public CustomerDTO findCustomerById(int id) {
-        Customer customer = customerDAO.findById(id);
+        try {
+            Customer customer = customerDAO.getData(id);
 
-        if (customer != null) {
-            return customer.toDto();
+            if (customer != null) {
+                return customer.toDto();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
         return null;
     }
 
     @Override
     public boolean deleteCustomer(int id) {
-        Customer customer = customerDAO.findById(id);
-
-        if (customer != null) {
-            customerDAO.delete(id);
-            return true;
+        try {
+            return customerDAO.delete(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
         return false;
     }
 
     @Override
     public List<CustomerDTO> findAllCustomers() {
-        List<Customer> customers = customerDAO.findAll();
+        try {
+            List<Customer> customers = customerDAO.getAll();
 
-        if (customers != null) {
+            if (customers != null) {
 
-            List<CustomerDTO> dtos = new ArrayList<>();
+                List<CustomerDTO> dtos = new ArrayList<>();
 
-            for (Customer customer : customers) {
-                dtos.add(customer.toDto());
+                for (Customer customer : customers) {
+                    dtos.add(customer.toDto());
+                }
+
+                return dtos;
             }
-
-            return dtos;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return null;
