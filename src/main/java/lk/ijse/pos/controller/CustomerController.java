@@ -2,7 +2,6 @@ package lk.ijse.pos.controller;
 
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +21,7 @@ public class CustomerController extends HttpServlet {
             (CustomerBOImpl) BOFactory.getBoFactory().getBO( BOFactory.BOType.CUSTOMER );
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try (var writer = resp.getWriter()) {
 
             String id = req.getParameter("id");
@@ -71,7 +70,7 @@ public class CustomerController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (req.getContentType() == null || !req.getContentType().toLowerCase().startsWith("application/json")) {
             System.out.println("Invalid request");
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -83,9 +82,9 @@ public class CustomerController extends HttpServlet {
 
             CustomerDTO dto = jsonb.fromJson(req.getReader(), CustomerDTO.class);
 
-            dto = customerBO.saveCustomer(dto);
+            boolean saved = customerBO.saveCustomer(dto);
 
-            if (dto != null) {
+            if (saved) {
                 resp.setStatus(HttpServletResponse.SC_CREATED);
                 writer.write("Customer saved successfully");
             } else {
@@ -96,7 +95,7 @@ public class CustomerController extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (req.getContentType() == null || !req.getContentType().toLowerCase().startsWith("application/json")) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -106,9 +105,9 @@ public class CustomerController extends HttpServlet {
 
             CustomerDTO dto = jsonb.fromJson(req.getReader(), CustomerDTO.class);
 
-            dto = customerBO.updateCustomer(dto);
+            boolean updated = customerBO.updateCustomer(dto);
 
-            if (dto != null) {
+            if (updated) {
                 resp.setStatus(HttpServletResponse.SC_CREATED);
                 writer.write("Customer updated successfully");
             } else {
@@ -119,11 +118,11 @@ public class CustomerController extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         try (var writer = resp.getWriter()) {
 
-            int cusId = Integer.parseInt(req.getParameter("cusId"));
+            int cusId = Integer.parseInt(req.getParameter("id"));
 
             boolean deleted = customerBO.deleteCustomer(cusId);
 
