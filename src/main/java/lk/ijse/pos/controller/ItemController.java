@@ -2,27 +2,26 @@ package lk.ijse.pos.controller;
 
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.pos.bo.BOFactory;
-import lk.ijse.pos.bo.custom.CustomerBO;
-import lk.ijse.pos.bo.custom.impl.CustomerBOImpl;
-import lk.ijse.pos.dto.CustomerDTO;
+import lk.ijse.pos.bo.custom.ItemBO;
+import lk.ijse.pos.bo.custom.impl.ItemBOImpl;
+import lk.ijse.pos.dto.ItemDTO;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-@WebServlet(urlPatterns = "/customer")
-public class CustomerController extends HttpServlet {
-    private final CustomerBO customerBO =
-            (CustomerBOImpl) BOFactory.getBoFactory().getBO( BOFactory.BOType.CUSTOMER );
+@WebServlet(urlPatterns = "/item")
+public class ItemController extends HttpServlet {
+    private final ItemBO itemBO =
+            (ItemBOImpl) BOFactory.getBoFactory().getBO( BOFactory.BOType.ITEM );
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try (var writer = resp.getWriter()) {
 
             String id = req.getParameter("id");
@@ -31,10 +30,10 @@ public class CustomerController extends HttpServlet {
 
             if (id != null) {
                 System.out.println("by id");
-                getCustomerById(resp, id, writer, jsonb);
+                getItemById(resp, id, writer, jsonb);
             } else {
                 System.out.println("all");
-                getAllCustomers(resp, writer, jsonb);
+                getAllItems(resp, writer, jsonb);
             }
 
         } catch (NumberFormatException e) {
@@ -42,36 +41,36 @@ public class CustomerController extends HttpServlet {
         }
     }
 
-    private void getAllCustomers(HttpServletResponse resp, PrintWriter writer, Jsonb jsonb) {
-        List<CustomerDTO> customers = customerBO.findAllCustomers();
+    private void getAllItems(HttpServletResponse resp, PrintWriter writer, Jsonb jsonb) {
+        List<ItemDTO> items = itemBO.findAllItems();
 
-        if (customers != null) {
+        if (items != null) {
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setContentType("application/json");
-            jsonb.toJson(customers, writer);
+            jsonb.toJson(items, writer);
         } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            writer.write("Customers not found");
+            writer.write("Items not found");
         }
     }
 
-    private void getCustomerById(HttpServletResponse resp, String id, PrintWriter writer, Jsonb jsonb) {
-        int cusId = Integer.parseInt(id);
+    private void getItemById(HttpServletResponse resp, String id, PrintWriter writer, Jsonb jsonb) {
+        int itemId = Integer.parseInt(id);
 
-        CustomerDTO customerDTO = customerBO.findCustomerById(cusId);
+        ItemDTO dto = itemBO.findItemById(itemId);
 
-        if (customerDTO != null) {
+        if (dto != null) {
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setContentType("application/json");
-            jsonb.toJson(customerDTO, writer);
+            jsonb.toJson(dto, writer);
         } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            writer.write("Customer not found");
+            writer.write("Item not found");
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (req.getContentType() == null || !req.getContentType().toLowerCase().startsWith("application/json")) {
             System.out.println("Invalid request");
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -81,22 +80,22 @@ public class CustomerController extends HttpServlet {
             System.out.println("Request Body: " + req.getReader());
             Jsonb jsonb = JsonbBuilder.create();
 
-            CustomerDTO dto = jsonb.fromJson(req.getReader(), CustomerDTO.class);
+            ItemDTO dto = jsonb.fromJson(req.getReader(), ItemDTO.class);
 
-            dto = customerBO.saveCustomer(dto);
+            boolean saved = itemBO.saveItem(dto);
 
-            if (dto != null) {
+            if (saved) {
                 resp.setStatus(HttpServletResponse.SC_CREATED);
-                writer.write("Customer saved successfully");
+                writer.write("Item saved successfully");
             } else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                writer.write("Customer not saved");
+                writer.write("Item not saved");
             }
         }
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (req.getContentType() == null || !req.getContentType().toLowerCase().startsWith("application/json")) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -104,35 +103,34 @@ public class CustomerController extends HttpServlet {
         try (var writer = resp.getWriter()) {
             Jsonb jsonb = JsonbBuilder.create();
 
-            CustomerDTO dto = jsonb.fromJson(req.getReader(), CustomerDTO.class);
+            ItemDTO dto = jsonb.fromJson(req.getReader(), ItemDTO.class);
 
-            dto = customerBO.updateCustomer(dto);
+            boolean updated = itemBO.updateItem(dto);
 
-            if (dto != null) {
+            if (updated) {
                 resp.setStatus(HttpServletResponse.SC_CREATED);
-                writer.write("Customer updated successfully");
+                writer.write("Item updated successfully");
             } else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                writer.write("Customer not updated");
+                writer.write("Item not updated");
             }
         }
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try (var writer = resp.getWriter()) {
 
-            int cusId = Integer.parseInt(req.getParameter("cusId"));
+            int itemId = Integer.parseInt(req.getParameter("id"));
 
-            boolean deleted = customerBO.deleteCustomer(cusId);
+            boolean deleted = itemBO.deleteItem(itemId);
 
             if (deleted) {
                 resp.setStatus(HttpServletResponse.SC_CREATED);
-                writer.write("Customer deleted successfully");
+                writer.write("Item deleted successfully");
             } else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                writer.write("Customer not deleted");
+                writer.write("Item not deleted");
             }
         }
     }
