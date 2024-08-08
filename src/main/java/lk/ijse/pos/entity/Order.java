@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -21,14 +22,6 @@ public class Order {
     private List<OrderDetail> itemList;
 
     public OrderDTO toDto() {
-        return new OrderDTO(id, date, total, discount, customerId, toDtoList());
-    }
-    public List<OrderDetailDTO> toDtoList() {
-        return itemList.stream().map(itemList -> new OrderDetailDTO(
-                itemList.getOrderId(),
-                itemList.getItemId(),
-                itemList.getQuantity(),
-                itemList.getPrice()
-        )).toList();
+        return new OrderDTO(id, date, total, discount, customerId, new ArrayList<>());
     }
 }
