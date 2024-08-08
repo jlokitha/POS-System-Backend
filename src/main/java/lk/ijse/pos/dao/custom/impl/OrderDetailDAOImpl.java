@@ -18,7 +18,7 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
     private Connection connection = DbConnection.getInstance().getConnection();
 
     @Override
-    public boolean save(OrderDetail entity) throws SQLException {
+    public boolean saveOrderDetail(OrderDetail entity, Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(SAVE_ORDER_DETAIL);
         stm.setInt(1, entity.getOrderId());
         stm.setInt(2, entity.getItemId());
@@ -63,5 +63,9 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
     @Override
     public List<OrderDetail> getAll() throws SQLException {
         return List.of();
+    }
+    @Override
+    public boolean save(OrderDetail entity) throws SQLException {
+        return false;
     }
 }

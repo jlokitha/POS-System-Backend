@@ -1,15 +1,18 @@
 package lk.ijse.pos.dao.custom.impl;
 
+import lk.ijse.pos.dao.custom.CustomerDAO;
 import lk.ijse.pos.db.DbConnection;
 import lk.ijse.pos.entity.Customer;
-import lk.ijse.pos.dao.custom.CustomerDAO;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDAOImpl implements CustomerDAO {
-    final static String SAVE_CUSTOMER = "INSERT INTO customer (id, name, address, salary) VALUES (?,?,?,?)";
+    final static String SAVE_CUSTOMER = "INSERT INTO customer (name, address, salary) VALUES (?,?,?)";
     final static String UPDATE_CUSTOMER = "UPDATE customer SET name=?, address=?, salary=? WHERE id=?";
     final static String GET_CUSTOMER = "SELECT * FROM customer WHERE id=?";
     final static String FIND_ALL = "SELECT * FROM customer";
@@ -20,10 +23,9 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public boolean save(Customer customer) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(SAVE_CUSTOMER);
-        stm.setInt(1, customer.getId());
-        stm.setString(2, customer.getName());
-        stm.setString(3, customer.getAddress());
-        stm.setDouble(4, customer.getSalary());
+        stm.setString(1, customer.getName());
+        stm.setString(2, customer.getAddress());
+        stm.setDouble(3, customer.getSalary());
         int save = stm.executeUpdate();
 
         if (save != 0) {
