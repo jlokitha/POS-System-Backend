@@ -25,7 +25,6 @@ public class OrderBOImpl implements OrderBO {
     @Override
     public boolean saveOrder(OrderDTO dto) throws SQLException {
         boolean result = false;
-
         try {
             TransactionUtil.startTransaction();
             int saved = orderDAO.saveOrder(dto.toEntity());
@@ -40,45 +39,40 @@ public class OrderBOImpl implements OrderBO {
             }
         } catch (SQLException e) {
             TransactionUtil.rollBack();
-            e.printStackTrace();
+            throw e;
         } finally {
             TransactionUtil.endTransaction();
         }
         return result;
     }
     @Override
-    public List<OrderDetailDTO> findOrderDetailsById(int id) {
-        try {
-            List<OrderDetail> all = orderDetailDAO.getAll(id);
-            if (!all.isEmpty()) {
-                List<OrderDetailDTO> list = new ArrayList<>();
-                for (OrderDetail detail : all) {
-                    list.add(detail.toDto());
-                }
-                return list;
+    public List<OrderDetailDTO> findOrderDetailsById(int id) throws SQLException {
+        List<OrderDetail> all = orderDetailDAO.getAll(id);
+
+        if (!all.isEmpty()) {
+            List<OrderDetailDTO> list = new ArrayList<>();
+
+            for (OrderDetail detail : all) {
+                list.add(detail.toDto());
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return list;
         }
         return null;
     }
     @Override
-    public List<OrderDTO> findAllOrders() {
-        try {
-            List<Order> all = orderDAO.getAll();
-            if (!all.isEmpty()) {
-                List<OrderDTO> list = new ArrayList<>();
-                for (Order order : all) {
-                    list.add(order.toDto());
-                    System.out.println(order.toDto());
-                }
-                System.out.println(list);
-                return list;
+    public List<OrderDTO> findAllOrders() throws SQLException {
+        List<Order> all = orderDAO.getAll();
+
+        if (!all.isEmpty()) {
+            List<OrderDTO> list = new ArrayList<>();
+
+            for (Order order : all) {
+                list.add(order.toDto());
+                System.out.println(order.toDto());
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(list);
+            return list;
         }
-        System.out.println("null");
         return null;
     }
 }

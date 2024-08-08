@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDetailDAOImpl implements OrderDetailDAO {
+    final static String SAVE_ORDER_DETAIL = "INSERT INTO `order_detail` VALUES (?,?,?,?)";
+    final static String GET_DETAILS = "SELECT * FROM `order_detail` WHERE `order_id` = ?";
+
     private Connection connection = DbConnection.getInstance().getConnection();
 
     @Override
     public boolean save(OrderDetail entity) throws SQLException {
-        String SAVE_ORDER_DETAIL = "INSERT INTO `order_detail` VALUES (?,?,?,?)";
-
         PreparedStatement stm = connection.prepareStatement(SAVE_ORDER_DETAIL);
         stm.setInt(1, entity.getOrderId());
         stm.setInt(2, entity.getItemId());
@@ -30,12 +31,11 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
     }
     @Override
     public List<OrderDetail> getAll(int orderId) throws SQLException {
-        String GET_DETAILS = "SELECT * FROM `order_detail` WHERE `order_id` = ?";
-
         PreparedStatement stm = connection.prepareStatement(GET_DETAILS);
         stm.setInt(1, orderId);
         ResultSet rs = stm.executeQuery();
         List<OrderDetail> details = new ArrayList<>();
+
         while (rs.next()) {
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrderId(rs.getInt(1));
@@ -44,6 +44,7 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
             orderDetail.setPrice(rs.getDouble(4));
             details.add(orderDetail);
         }
+
         if (!details.isEmpty()) return details;
         return null;
     }

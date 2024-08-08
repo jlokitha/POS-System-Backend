@@ -10,7 +10,7 @@ import java.util.List;
 public interface OrderBO extends SuperBO {
     boolean saveOrder(OrderDTO dto) throws SQLException;
 
-    List<OrderDetailDTO> findOrderDetailsById(int id);
+    List<OrderDetailDTO> findOrderDetailsById(int id) throws SQLException;
 
-    List<OrderDTO> findAllOrders();
+    List<OrderDTO> findAllOrders() throws SQLException;
 }
