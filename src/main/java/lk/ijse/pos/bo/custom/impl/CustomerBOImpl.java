@@ -16,68 +16,35 @@ public class CustomerBOImpl implements CustomerBO {
             (CustomerDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOType.CUSTOMER);
 
     @Override
-    public boolean saveCustomer(CustomerDTO dto) {
-        try {
-            return customerDAO.save(dto.toEntity());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean saveCustomer(CustomerDTO dto) throws SQLException {
+        return customerDAO.save(dto.toEntity());
     }
-
     @Override
-    public boolean updateCustomer(CustomerDTO dto) {
-        try {
-            return customerDAO.update(dto.toEntity());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean updateCustomer(CustomerDTO dto) throws SQLException {
+        return customerDAO.update(dto.toEntity());
     }
-
     @Override
-    public CustomerDTO findCustomerById(int id) {
-        try {
-            Customer customer = customerDAO.getData(id);
+    public CustomerDTO findCustomerById(int id) throws SQLException {
+        Customer customer = customerDAO.getData(id);
 
-            if (customer != null) {
-                return customer.toDto();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (customer != null) {
+            return customer.toDto();
         }
         return null;
     }
-
     @Override
-    public boolean deleteCustomer(int id) {
-        try {
-            return customerDAO.delete(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean deleteCustomer(int id) throws SQLException {
+        return customerDAO.delete(id);
     }
-
     @Override
-    public List<CustomerDTO> findAllCustomers() {
-        try {
-            List<Customer> customers = customerDAO.getAll();
+    public List<CustomerDTO> findAllCustomers() throws SQLException {
+        List<Customer> customers = customerDAO.getAll();
 
-            if (customers != null) {
+        List<CustomerDTO> dtos = new ArrayList<>();
 
-                List<CustomerDTO> dtos = new ArrayList<>();
-
-                for (Customer customer : customers) {
-                    dtos.add(customer.toDto());
-                }
-
-                return dtos;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Customer customer : customers) {
+            dtos.add(customer.toDto());
         }
-
-        return null;
+        return dtos;
     }
 }

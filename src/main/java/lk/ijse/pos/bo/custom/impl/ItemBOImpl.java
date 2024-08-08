@@ -17,63 +17,34 @@ public class ItemBOImpl implements ItemBO {
             (ItemDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOType.ITEM);
 
     @Override
-    public boolean saveItem(ItemDTO dto) {
-        try {
-            return itemDAO.save(dto.toEntity());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean saveItem(ItemDTO dto) throws SQLException {
+        return itemDAO.save(dto.toEntity());
     }
-
     @Override
-    public boolean updateItem(ItemDTO dto) {
-        try {
-            return itemDAO.update(dto.toEntity());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean updateItem(ItemDTO dto) throws SQLException {
+        return itemDAO.update(dto.toEntity());
     }
-
     @Override
-    public ItemDTO findItemById(int id) {
-        try {
-            Item data = itemDAO.getData(id);
+    public ItemDTO findItemById(int id) throws SQLException {
+        Item data = itemDAO.getData(id);
 
-            if (data != null) {
-                return data.toDto();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (data != null) {
+            return data.toDto();
         }
         return null;
     }
-
     @Override
-    public boolean deleteItem(int id) {
-        try {
-            return itemDAO.delete(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean deleteItem(int id) throws SQLException {
+        return itemDAO.delete(id);
     }
-
     @Override
-    public List<ItemDTO> findAllItems() {
-        try {
-            List<Item> all = itemDAO.getAll();
+    public List<ItemDTO> findAllItems() throws SQLException {
+        List<Item> all = itemDAO.getAll();
+        List<ItemDTO> dtos = new ArrayList<>();
 
-            List<ItemDTO> dtos = new ArrayList<>();
-
-            for (Item item : all) {
-                dtos.add(item.toDto());
-            }
-            return dtos;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Item item : all) {
+            dtos.add(item.toDto());
         }
-        return null;
+        return dtos;
     }
 }
