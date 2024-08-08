@@ -3,4 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
+
+    <context-param>
+        <param-name>origin</param-name>
+        <param-value>http://127.0.0.1:5500</param-value>
+    </context-param>
 </web-app>
