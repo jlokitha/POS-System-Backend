@@ -23,13 +23,14 @@ import java.util.List;
 @WebServlet(urlPatterns = "/order")
 public class OrderController extends HttpServlet {
     private final OrderBO orderBO =
-            (OrderBOImpl) BOFactory.getBoFactory().getBO( BOFactory.BOType.ORDER );
+            (OrderBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOType.ORDER);
     static Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @Override
     public void init() throws ServletException {
         logger.info("OrderController Initialized");
     }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try (var writer = resp.getWriter()) {
@@ -46,6 +47,7 @@ public class OrderController extends HttpServlet {
             logger.error(e.getMessage());
         }
     }
+
     private void getAllOrders(HttpServletResponse resp, PrintWriter writer, Jsonb jsonb) {
         try {
             List<OrderDTO> all = orderBO.findAllOrders();
@@ -64,6 +66,7 @@ public class OrderController extends HttpServlet {
             logger.error(e.getMessage());
         }
     }
+
     private void getDetailsById(HttpServletResponse resp, String id, PrintWriter writer, Jsonb jsonb) {
         try {
             int orderId = Integer.parseInt(id);
@@ -83,17 +86,18 @@ public class OrderController extends HttpServlet {
             logger.error(e.getMessage());
         }
     }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (req.getContentType() == null || !req.getContentType().toLowerCase().startsWith("application/json")) {
             logger.error("Invalid request");
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
-
         try (var writer = resp.getWriter()) {
-            System.out.println("Request Body: " + req.getReader());
+            System.out.println("Request received");
             Jsonb jsonb = JsonbBuilder.create();
             OrderDTO dto = jsonb.fromJson(req.getReader(), OrderDTO.class);
+            System.out.println(dto);
             boolean saved = orderBO.saveOrder(dto);
 
             if (saved) {
@@ -105,7 +109,8 @@ public class OrderController extends HttpServlet {
                 writer.write("Order not saved");
                 logger.warn("Order not saved");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             logger.error(e.getMessage());
         }
     }

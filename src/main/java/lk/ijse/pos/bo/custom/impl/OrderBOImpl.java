@@ -6,12 +6,13 @@ import lk.ijse.pos.dao.custom.OrderDAO;
 import lk.ijse.pos.dao.custom.OrderDetailDAO;
 import lk.ijse.pos.dao.custom.impl.OrderDAOImpl;
 import lk.ijse.pos.dao.custom.impl.OrderDetailDAOImpl;
+import lk.ijse.pos.db.DbConnection;
 import lk.ijse.pos.dto.OrderDTO;
 import lk.ijse.pos.dto.OrderDetailDTO;
 import lk.ijse.pos.entity.Order;
 import lk.ijse.pos.entity.OrderDetail;
-import lk.ijse.pos.utils.TransactionUtil;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,26 +23,28 @@ public class OrderBOImpl implements OrderBO {
     private final OrderDetailDAO orderDetailDAO =
             (OrderDetailDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOType.ORDER_DETAIL);
 
+    Connection connection;
+
     @Override
     public boolean saveOrder(OrderDTO dto) throws SQLException {
         boolean result = false;
         try {
-            TransactionUtil.startTransaction();
-            int saved = orderDAO.saveOrder(dto.toEntity());
-
+            connection = DbConnection.getInstance().getConnection();
+            connection.setAutoCommit(false);
+            int saved = orderDAO.saveOrder(dto.toEntity(), connection);
+            System.out.println(saved);
             if (saved != -1) {
                 List<OrderDetailDTO> list = dto.getItemList();
                 for (OrderDetailDTO item : list) {
                     item.setOrderId(saved);
-                    orderDetailDAO.save(item.toEntity());
+                    orderDetailDAO.saveOrderDetail(item.toEntity(), connection);
                 }
                 result = true;
+                connection.commit();
             }
         } catch (SQLException e) {
-            TransactionUtil.rollBack();
+            connection.rollback();
             throw e;
-        } finally {
-            TransactionUtil.endTransaction();
         }
         return result;
     }
@@ -59,6 +62,7 @@ public class OrderBOImpl implements OrderBO {
         }
         return null;
     }
+
     @Override
     public List<OrderDTO> findAllOrders() throws SQLException {
         List<Order> all = orderDAO.getAll();

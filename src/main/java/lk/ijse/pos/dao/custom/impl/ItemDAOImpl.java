@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemDAOImpl implements ItemDAO {
-    final static String SAVE_ITEM = "INSERT INTO item (id, description, qty, price) VALUES (?,?,?,?)";
-    final static String DELETE_CUSTOMER = "DELETE FROM item WHERE id=?";
+    final static String SAVE_ITEM = "INSERT INTO item (description, qty, price) VALUES (?,?,?)";
+    final static String DELETE_ITEM = "DELETE FROM item WHERE id=?";
     final static String UPDATE_ITEM = "UPDATE item SET description=?, qty=?, price=? WHERE id=?";
-    final static String GET_CUSTOMER = "SELECT * FROM item WHERE id=?";
+    final static String GET_ITEM = "SELECT * FROM item WHERE id=?";
     final static String FIND_ALL = "SELECT * FROM item";
 
     private Connection connection = DbConnection.getInstance().getConnection();
@@ -23,10 +23,9 @@ public class ItemDAOImpl implements ItemDAO {
     @Override
     public boolean save(final Item entity) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(SAVE_ITEM);
-        stm.setInt(1, entity.getId());
-        stm.setString(2, entity.getDescription());
-        stm.setInt(3, entity.getQuantity());
-        stm.setDouble(4, entity.getPrice());
+        stm.setString(1, entity.getDescription());
+        stm.setInt(2, entity.getQuantity());
+        stm.setDouble(3, entity.getPrice());
         int save = stm.executeUpdate();
 
         if (save != 0) {
@@ -36,7 +35,7 @@ public class ItemDAOImpl implements ItemDAO {
     }
     @Override
     public boolean delete(final int id) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(DELETE_CUSTOMER);
+        PreparedStatement stm = connection.prepareStatement(DELETE_ITEM);
         stm.setInt(1, id);
         int delete = stm.executeUpdate();
 
@@ -61,7 +60,7 @@ public class ItemDAOImpl implements ItemDAO {
     }
     @Override
     public Item getData(final int id) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(GET_CUSTOMER);
+        PreparedStatement stm = connection.prepareStatement(GET_ITEM);
         stm.setInt(1, id);
         ResultSet rs = stm.executeQuery();
 

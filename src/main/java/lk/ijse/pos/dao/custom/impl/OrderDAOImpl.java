@@ -9,20 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAOImpl implements OrderDAO {
-    final static String SAVE_ORDER = "INSERT INTO `order` VALUES (?,?,?,?,?)";
+    final static String SAVE_ORDER = "INSERT INTO `order` (date, total, discount, customer_id) VALUES (?,?,?,?)";
     final static String GET_ORDER = "SELECT * FROM `order` WHERE `id`=?";
     final static String GET_ALL_ORDER = "SELECT * FROM `order`";
 
     private Connection connection = DbConnection.getInstance().getConnection();
 
     @Override
-    public int saveOrder(Order entity) throws SQLException {
+    public int saveOrder(Order entity, Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(SAVE_ORDER);
-        stm.setInt(1, entity.getId());
-        stm.setDate(2, Date.valueOf(entity.getDate()));
-        stm.setDouble(3, entity.getTotal());
-        stm.setDouble(4, entity.getDiscount());
-        stm.setInt(5, entity.getCustomerId());
+        stm.setDate(1, Date.valueOf(entity.getDate()));
+        stm.setDouble(2, entity.getTotal());
+        stm.setDouble(3, entity.getDiscount());
+        stm.setInt(4, entity.getCustomerId());
         int save = stm.executeUpdate();
 
         if (save != 0) return save;
