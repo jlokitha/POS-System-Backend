@@ -2,8 +2,10 @@ package lk.ijse.pos.bo.custom.impl;
 
 import lk.ijse.pos.bo.custom.OrderBO;
 import lk.ijse.pos.dao.DAOFactory;
+import lk.ijse.pos.dao.custom.ItemDAO;
 import lk.ijse.pos.dao.custom.OrderDAO;
 import lk.ijse.pos.dao.custom.OrderDetailDAO;
+import lk.ijse.pos.dao.custom.impl.ItemDAOImpl;
 import lk.ijse.pos.dao.custom.impl.OrderDAOImpl;
 import lk.ijse.pos.dao.custom.impl.OrderDetailDAOImpl;
 import lk.ijse.pos.db.DbConnection;
@@ -22,6 +24,8 @@ public class OrderBOImpl implements OrderBO {
             (OrderDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOType.ORDER);
     private final OrderDetailDAO orderDetailDAO =
             (OrderDetailDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOType.ORDER_DETAIL);
+    private final ItemDAO itemDAO =
+            (ItemDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOType.ITEM);
 
     Connection connection;
 
@@ -38,6 +42,7 @@ public class OrderBOImpl implements OrderBO {
                 for (OrderDetailDTO item : list) {
                     item.setOrderId(saved);
                     orderDetailDAO.saveOrderDetail(item.toEntity(), connection);
+                    itemDAO.updateQty(item.getItemId(), item.getQuantity(), connection);
                 }
                 result = true;
                 connection.commit();
