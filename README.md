@@ -78,7 +78,7 @@ To install and run the System, follow these steps:
     - The application should be deployed and accessible from your browser.
 
 ## Front-End Project
-For the front-end of the POS system, visit the [POS System Front-End Repository](https://github.com/jlokitha/POS-system.git).
+For the front-end of the POS system, visit the [POS System Front-End Repository](https://github.com/jlokitha/POS-System-Frontend.git).
 
 ## API Documentation
 You can find the API documentation for this project at [API Documentation](https://documenter.getpostman.com/view/35384124/2sA3s1psRe).
