@@ -4,14 +4,15 @@
 A backend service for a Point of Sale (POS) system designed to manage customer and item data efficiently. This service facilitates the creation, retrieval, updating, and deletion of records, and provides capabilities for saving and retrieving order information.
 
 ## Technologies Used
-The following technologies were used in the development of the System:
+The following technologies were used in the development of the Backend Server:
 
 - **JakarthaEE**
 - **MySQL**
 - **Maven**
 - **Tomcat**
+- **JNDI**
 
-## Key Features
+## API endpoints
 - **Customer Management:**
   - Create new customer records.
   - Read and retrieve customer details.
@@ -52,7 +53,6 @@ To install and run the System, follow these steps:
    
    ```bash
    idea .
-    
 ## Setup and Configuration
 - **Configure Tomcat:**
     - Go to `Run` > `Edit Configurations`.
@@ -68,7 +68,7 @@ To install and run the System, follow these steps:
       <Context>
         <Resource name="jdbc/POSSystem" auth="Container" type="javax.sql.DataSource"
               maxTotal="20" maxIdle="10" maxWaitMillis="-1"
-              username="root" password="lokitha2003" driverClassName="com.mysql.cj.jdbc.Driver"
+              username="YOUR_USERNAME" password="YOUR_PASSWORD" driverClassName="com.mysql.cj.jdbc.Driver"
               url="jdbc:mysql://localhost:3306/pos_system"/>
       </Context>
 
