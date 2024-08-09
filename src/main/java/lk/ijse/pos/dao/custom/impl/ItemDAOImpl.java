@@ -17,6 +17,7 @@ public class ItemDAOImpl implements ItemDAO {
     final static String UPDATE_ITEM = "UPDATE item SET description=?, qty=?, price=? WHERE id=?";
     final static String GET_ITEM = "SELECT * FROM item WHERE id=?";
     final static String FIND_ALL = "SELECT * FROM item";
+    final static String UPDATE_ITEM_QTY = "UPDATE item SET qty=qty-? WHERE id=?";
 
     private Connection connection = DbConnection.getInstance().getConnection();
 
@@ -89,5 +90,17 @@ public class ItemDAOImpl implements ItemDAO {
             ));
         }
         return items;
+    }
+    @Override
+    public boolean updateQty(final int id, final int qty, final Connection connection) throws SQLException {
+        PreparedStatement stm = connection.prepareStatement(UPDATE_ITEM_QTY);
+        stm.setInt(1, qty);
+        stm.setInt(2, id);
+        int update = stm.executeUpdate();
+
+        if (update != 0) {
+            return true;
+        }
+        return false;
     }
 }
