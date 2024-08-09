@@ -36,7 +36,7 @@ public class OrderBOImpl implements OrderBO {
             connection = DbConnection.getInstance().getConnection();
             connection.setAutoCommit(false);
             int saved = orderDAO.saveOrder(dto.toEntity(), connection);
-            System.out.println(saved);
+
             if (saved != -1) {
                 List<OrderDetailDTO> list = dto.getItemList();
                 for (OrderDetailDTO item : list) {

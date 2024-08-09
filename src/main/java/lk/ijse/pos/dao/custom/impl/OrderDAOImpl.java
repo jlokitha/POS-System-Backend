@@ -17,14 +17,22 @@ public class OrderDAOImpl implements OrderDAO {
 
     @Override
     public int saveOrder(Order entity, Connection connection) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(SAVE_ORDER);
+        PreparedStatement stm = connection.prepareStatement(SAVE_ORDER, Statement.RETURN_GENERATED_KEYS);
         stm.setDate(1, Date.valueOf(entity.getDate()));
         stm.setDouble(2, entity.getTotal());
         stm.setDouble(3, entity.getDiscount());
         stm.setInt(4, entity.getCustomerId());
         int save = stm.executeUpdate();
 
-        if (save != 0) return save;
+        if (save != 0) {
+            try (ResultSet generatedKeys = stm.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Creating order failed, no ID obtained.");
+                }
+            }
+        }
         return -1;
     }
     @Override
